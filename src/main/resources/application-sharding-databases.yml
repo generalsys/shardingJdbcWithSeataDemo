@@ -1,0 +1,25 @@
+spring:
+  shardingsphere:
+    datasource:
+      names: ds-0,ds-1
+      ds-0:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://47.92.192.30:51000/db1?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+      ds-1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://47.92.192.30:51000/db2?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+    sharding:
+      default-database-strategy:
+        inline:
+          algorithm-expression: ds-$->{order_id % 2}
+          sharding-column: order_id
+
+
+

@@ -1,0 +1,17 @@
+#spring.profiles.active=sharding-databases
+#spring.profiles.active=sharding-tables
+#spring.profiles.active=sharding-databases-tables
+#spring.profiles.active=master-slave
+spring:
+  application:
+    name: sharding-demo
+  profiles:
+    active: sharding-master-slave
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+
+

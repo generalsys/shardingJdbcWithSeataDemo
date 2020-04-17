@@ -1,0 +1,111 @@
+spring:
+  shardingsphere:
+    #数据源配置
+    datasource:
+      names: ds-master-0,ds-master-1,ds-master-2,ds-slave-0,ds-slave-1,ds-slave-2
+      ds-master-0:
+        jdbc-url: jdbc:mysql://47.92.192.30:51000/db1?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+      ds-master-1:
+        jdbc-url: jdbc:mysql://47.92.192.30:51000/db2?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+      ds-master-2:
+        jdbc-url: jdbc:mysql://47.92.192.30:51000/db3?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+      ds-slave-0:
+        jdbc-url: jdbc:mysql://47.92.192.30:51001/db1?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+      ds-slave-1:
+        jdbc-url: jdbc:mysql://47.92.192.30:51001/db2?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+      ds-slave-2:
+        jdbc-url: jdbc:mysql://47.92.192.30:51001/db3?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+        password: Bjh34-ak47
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+
+    sharding:
+      #主从配置
+      master-slave-rules:
+        ds_2:
+          slave-data-source-names: ds-slave-2
+          master-data-source-name: ds-master-2
+        ds_1:
+          slave-data-source-names: ds-slave-1
+          master-data-source-name: ds-master-1
+        ds_0:
+          slave-data-source-names: ds-slave-0
+          master-data-source-name: ds-master-0
+      #默认分库策略
+      default-database-strategy:
+        standard:
+          sharding-column: order_id
+          range-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloRangeShardingDatabaseAlgorithm
+          precise-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloPreciseShardingDatabaseAlgorithm
+        #inline:
+          #sharding-column: order_id
+          #algorithm-expression: ds_$->{order_id % 3 }
+      #绑定表
+      binding-tables: t_order,t_order_item
+      #广播表
+      broadcast-tables: t_address
+      #分表策略
+      tables:
+        t_order:
+          #真实表分布
+          actual-data-nodes: ds_$->{0..2}.t_order_$->{0..1}
+          #分表
+          table-strategy:
+            #标准分表策略
+            standard:
+              sharding-column: order_id
+              #range-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloRangeShardingTableAlgorithm
+              precise-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloPreciseShardingTableAlgorithm
+            #内置分表策略
+            #inline:
+              #sharding-column: order_id
+              #algorithm-expression: t_order_$->{order_id %2}
+          #分布式主键生成策略 snowflake
+          key-generator:
+            column: order_id
+            type: SNOWFLAKE
+            props:
+              worker:
+                id: 123
+
+        t_order_item:
+          key-generator:
+            column: order_item_id
+            type: SNOWFLAKE
+            props:
+              worker:
+                id: 123
+          table-strategy:
+            standard:
+              sharding-column: order_id
+              #range-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloRangeShardingTableAlgorithm
+              precise-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloPreciseShardingTableAlgorithm
+            #inline:
+              #sharding-column: order_id
+              #algorithm-expression: t_order_item_$->{order_id  %2}
+          actual-data-nodes: ds_$->{0..2}.t_order_item_$->{0..1}
+    props:
+      sql:
+        #sql打印
+        show: true
