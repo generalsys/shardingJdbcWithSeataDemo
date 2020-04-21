@@ -56,7 +56,7 @@ spring:
       default-database-strategy:
         standard:
           sharding-column: order_id
-          range-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloRangeShardingDatabaseAlgorithm
+          #range-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloRangeShardingDatabaseAlgorithm
           precise-algorithm-class-name: com.arthur.shardingsphere.sharding_demo.algorithm.ModuloPreciseShardingDatabaseAlgorithm
         #inline:
           #sharding-column: order_id
